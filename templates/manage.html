@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Data - Smart Timetable Scheduler</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}">Smart Scheduler</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="{{ url_for('manage') }}">Manage Data</a></li>
+                </ul>
+                <span class="navbar-text me-3">
+                    Welcome, {{ session['username'] }}!
+                </span>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-light">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1 class="mb-4 text-center">Manage University Data</h1>
+        <p class="text-center text-muted">Input, edit, and save all parameters for timetable generation.</p>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Rooms</h3>
+            </div>
+            <div class="card-body">
+                <form id="addRoomForm" class="row g-3 align-items-center">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="roomName" placeholder="New Room Name (e.g., LTR-101)" required>
+                    </div>
+                    <div class="col-md-auto">
+                        <button type="submit" class="btn btn-primary">Add Room</button>
+                    </div>
+                </form>
+                <hr>
+                <h4>Existing Rooms</h4>
+                <ul id="roomList" class="list-group">
+                    </ul>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Batches / Programs</h3>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Currently, only Rooms are implemented. You'll add forms and lists for Batches here, similar to how Rooms work.</p>
+                <form id="addBatchForm" class="row g-3 align-items-center">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="batchName" placeholder="New Batch Name (e.g., B.Tech CSE 2025)" required>
+                    </div>
+                    <div class="col-md-auto">
+                        <button type="submit" class="btn btn-primary">Add Batch</button>
+                    </div>
+                </form>
+                <hr>
+                <h4>Existing Batches</h4>
+                <ul id="batchList" class="list-group">
+                    </ul>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Subjects</h3>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">You'll add forms and lists for Subjects here.</p>
+                <form id="addSubjectForm" class="row g-3 align-items-center">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" id="subjectName" placeholder="Subject Name (e.g., Data Structures)" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" id="subjectCode" placeholder="Code (e.g., CS-301)" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="number" class="form-control" id="subjectHours" placeholder="Hours/Week" required min="1" max="10">
+                    </div>
+                    <div class="col-md-auto">
+                        <button type="submit" class="btn btn-primary">Add Subject</button>
+                    </div>
+                </form>
+                <hr>
+                <h4>Existing Subjects</h4>
+                <ul id="subjectList" class="list-group">
+                    </ul>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Faculty</h3>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">You'll add forms and lists for Faculty and manage subjects they teach here.</p>
+                <form id="addFacultyForm" class="row g-3 align-items-center mb-3">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="facultyName" placeholder="Faculty Name (e.g., Dr. Alice Smith)" required>
+                    </div>
+                    <div class="col-md-auto">
+                        <button type="submit" class="btn btn-primary">Add Faculty</button>
+                    </div>
+                </form>
+                <hr>
+                <h4>Existing Faculty</h4>
+                <ul id="facultyList" class="list-group">
+                    </ul>
+
+                <h4 class="mt-4">Assign Subjects to Faculty</h4>
+                <form id="assignSubjectForm" class="row g-3 align-items-center">
+                    <div class="col-md-4">
+                        <select id="assignFacultySelect" class="form-select" required>
+                            <option value="">Select Faculty</option>
+                            {% for faculty in faculties %}
+                            <option value="{{ faculty.id }}">{{ faculty.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <select id="assignSubjectSelect" class="form-select" required>
+                            <option value="">Select Subject</option>
+                            {% for subject in subjects %}
+                            <option value="{{ subject.id }}">{{ subject.name }} ({{ subject.code }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-auto">
+                        <button type="submit" class="btn btn-primary">Assign Subject</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

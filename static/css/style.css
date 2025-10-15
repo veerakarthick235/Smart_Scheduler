@@ -1,0 +1,204 @@
+/* static/css/style.css */
+
+/* General Body Styling for a Clean College Theme */
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    background: linear-gradient(135deg, #e0eafc, #cfdef3); /* Subtle gradient for depth */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    color: #333; /* Darker text for readability */
+}
+
+/* Navbar Enhancements */
+.navbar {
+    background-color: #2c3e50 !important; /* Dark blue, common for university branding */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Soft shadow for lift */
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #ecf0f1 !important; /* Light text for contrast */
+}
+
+.navbar-nav .nav-link {
+    color: #bdc3c7 !important; /* Muted link color */
+    transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: #ffffff !important; /* White on hover/active */
+}
+
+.navbar-text {
+    color: #ecf0f1 !important;
+}
+
+/* Main Container Padding and Background */
+.container {
+    flex: 1; /* Allows content to push footer down */
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+/* Card Styling for Sections (Login, Register, Manage, Dashboard Sections) */
+.card {
+    border: none; /* Remove default card border */
+    border-radius: 0.75rem; /* Slightly rounded corners */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); /* Softer, more pronounced shadow */
+    background-color: #ffffff; /* White background for content */
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background-color: #f8f9fa; /* Light gray header */
+    border-bottom: 1px solid #e0eafc;
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+    border-top-left-radius: 0.75rem;
+    border-top-right-radius: 0.75rem;
+    color: #2c3e50;
+    font-size: 1.25rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Button Styling */
+.btn-primary {
+    background-color: #3498db; /* A vibrant, professional blue */
+    border-color: #3498db;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9; /* Slightly darker on hover */
+    border-color: #2980b9;
+    transform: translateY(-2px); /* Subtle lift effect */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.btn-success {
+    background-color: #27ae60;
+    border-color: #27ae60;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.btn-success:hover {
+    background-color: #229954;
+    border-color: #229954;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.btn-danger {
+    background-color: #e74c3c;
+    border-color: #e74c3c;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+    border-color: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.btn-outline-light {
+    color: #ecf0f1 !important;
+    border-color: #ecf0f1 !important;
+}
+
+.btn-outline-light:hover {
+    background-color: #ecf0f1 !important;
+    color: #2c3e50 !important;
+}
+
+
+/* Form Control Styling */
+.form-control {
+    border-radius: 0.5rem;
+    border: 1px solid #ced4da;
+    padding: 0.75rem 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+}
+
+/* Table Styling for Timetable Display */
+.table {
+    --bs-table-bg: #fdfefe; /* Lighter background for table rows */
+    --bs-table-striped-bg: #f3f7f9; /* Subtle stripe */
+    border-radius: 0.75rem;
+    overflow: hidden; /* Ensures rounded corners on table */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+}
+
+.table thead {
+    background-color: #e0eafc; /* Light blue header */
+    color: #2c3e50;
+}
+
+.table th, .table td {
+    padding: 0.8rem;
+    vertical-align: middle;
+    border-color: #e9ecef;
+}
+
+.table tbody tr:hover {
+    background-color: #eaf1f8; /* Slightly darker on row hover */
+}
+
+/* Specific styling for timetable cells */
+.table td div {
+    font-size: 0.85rem;
+    line-height: 1.3;
+}
+.table td strong {
+    color: #34495e; /* Darker shade for subject name */
+}
+.table td i {
+    color: #7f8c8d; /* Muted for room */
+}
+
+/* Status Messages */
+#status {
+    font-weight: 500;
+    color: #34495e;
+}
+
+/* Spinner */
+.spinner-border {
+    color: #3498db;
+}
+
+/* Optional: Footer if you add one later */
+.footer {
+    padding: 1rem;
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    text-align: center;
+    margin-top: auto; /* Pushes footer to the bottom */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.25rem;
+    }
+    .card-header {
+        font-size: 1.1rem;
+    }
+    .btn {
+        font-size: 0.9rem;
+    }
+}
