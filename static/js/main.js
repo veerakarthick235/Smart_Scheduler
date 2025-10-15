@@ -1,5 +1,3 @@
-// static/js/main.js
-
 document.addEventListener('DOMContentLoaded', () => {
     // Determine which page is loaded and initialize accordingly
     if (document.getElementById('addRoomForm')) {
@@ -10,59 +8,54 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+
+
+async function fetchData(url, method = 'GET', data = null) {
+    const options = {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+    };
+    if (data) {
+        options.body = JSON.stringify(data);
+    }
+    try {
+        const response = await fetch(url, options);
+        if (response.status === 401) {
+            alert('Session expired or Unauthorized. Please log in again.');
+            window.location.href = '/'; // Redirect to login
+            return null;
+        }
+        return response.json();
+    } catch (error) {
+        console.error('Fetch error:', error);
+        return null;
+    }
+}
+
+
 // ======================================================================
-// --- MANAGE PAGE LOGIC (CRUD for Rooms, Batches, Subjects, Faculty) ---
+// --- MANAGE PAGE LOGIC ---
 // ======================================================================
 
 function initializeManagePage() {
-    // --- Room Elements ---
+    // --- Element Definitions ---
     const addRoomForm = document.getElementById('addRoomForm');
     const roomNameInput = document.getElementById('roomName');
     const roomList = document.getElementById('roomList');
-
-    // --- Batch Elements ---
     const addBatchForm = document.getElementById('addBatchForm');
     const batchNameInput = document.getElementById('batchName');
     const batchList = document.getElementById('batchList');
-
-    // --- Subject Elements ---
     const addSubjectForm = document.getElementById('addSubjectForm');
     const subjectNameInput = document.getElementById('subjectName');
     const subjectCodeInput = document.getElementById('subjectCode');
     const subjectHoursInput = document.getElementById('subjectHours');
     const subjectList = document.getElementById('subjectList');
-
-    // --- Faculty Elements ---
     const addFacultyForm = document.getElementById('addFacultyForm');
     const facultyNameInput = document.getElementById('facultyName');
     const facultyList = document.getElementById('facultyList');
     const assignSubjectForm = document.getElementById('assignSubjectForm');
     const assignFacultySelect = document.getElementById('assignFacultySelect');
     const assignSubjectSelect = document.getElementById('assignSubjectSelect');
-
-
-    // --- Generic Fetch Helper ---
-    async function fetchData(url, method = 'GET', data = null) {
-        const options = {
-            method: method,
-            headers: { 'Content-Type': 'application/json' },
-        };
-        if (data) {
-            options.body = JSON.stringify(data);
-        }
-        try {
-            const response = await fetch(url, options);
-            if (response.status === 401) {
-                alert('Session expired or Unauthorized. Please log in again.');
-                window.location.href = '/'; // Redirect to login
-                return null;
-            }
-            return response.json();
-        } catch (error) {
-            console.error('Fetch error:', error);
-            return null;
-        }
-    }
 
     // --- Rooms CRUD ---
     const loadRooms = async () => {
@@ -156,13 +149,11 @@ function initializeManagePage() {
                     if (confirm(`Are you sure you want to delete subject "${subject.name}"?`)) {
                         await fetchData(`/api/subjects/${subject.id}`, 'DELETE');
                         loadSubjects();
-                        loadFaculties(); // Reload faculties as subject associations might change
+                        loadFaculties();
                     }
                 };
                 li.appendChild(deleteBtn);
                 subjectList.appendChild(li);
-
-                // Populate assign subject dropdown
                 const option = document.createElement('option');
                 option.value = subject.id;
                 option.textContent = `${subject.name} (${subject.code})`;
@@ -181,11 +172,9 @@ function initializeManagePage() {
             return;
         }
         await fetchData('/api/subjects', 'POST', { name, code, hours_per_week });
-        subjectNameInput.value = '';
-        subjectCodeInput.value = '';
-        subjectHoursInput.value = '';
+        addSubjectForm.reset();
         loadSubjects();
-        loadFaculties(); // Reload faculties as new subjects can be assigned
+        loadFaculties();
     });
 
     // --- Faculty CRUD and Subject Assignment ---
@@ -200,11 +189,9 @@ function initializeManagePage() {
             faculties.forEach(faculty => {
                 const li = document.createElement('li');
                 li.className = 'list-group-item d-flex justify-content-between align-items-center flex-wrap';
-                
                 const facultyInfo = document.createElement('span');
                 facultyInfo.innerHTML = `<b>${faculty.name}</b><br><small class="text-muted">Can teach: ${faculty.subjects.map(s => s.code).join(', ') || 'None'}</small>`;
                 li.appendChild(facultyInfo);
-
                 const deleteBtn = document.createElement('button');
                 deleteBtn.className = 'btn btn-danger btn-sm ms-auto';
                 deleteBtn.textContent = 'Delete';
@@ -216,8 +203,6 @@ function initializeManagePage() {
                 };
                 li.appendChild(deleteBtn);
                 facultyList.appendChild(li);
-
-                // Populate assign faculty dropdown
                 const option = document.createElement('option');
                 option.value = faculty.id;
                 option.textContent = faculty.name;
@@ -244,9 +229,8 @@ function initializeManagePage() {
             return;
         }
         await fetchData(`/api/faculties/${facultyId}/subjects`, 'POST', { subject_id: subjectId });
-        assignFacultySelect.value = '';
-        assignSubjectSelect.value = '';
-        loadFaculties(); // Reload faculties to show new assignments
+        assignSubjectForm.reset();
+        loadFaculties();
     });
 
     // --- Initial Loads for Manage Page ---
@@ -268,11 +252,11 @@ function initializeDashboard() {
 
     generateBtn.addEventListener('click', async () => {
         statusDiv.innerHTML = '<div class="spinner-border spinner-border-sm text-primary me-2" role="status"><span class="visually-hidden">Loading...</span></div>Generating... This may take a moment. Check the terminal for progress.';
-        resultsContainer.innerHTML = ''; // Clear previous results
+        resultsContainer.innerHTML = '';
 
-        const data = await fetchData('/api/generate', 'POST');
+        const data = await fetchData('/api/generate', 'POST'); // This will now work
 
-        if (!data) { // fetchData handles unauthorized, so this is for other errors
+        if (!data) {
             statusDiv.textContent = 'An unexpected error occurred during generation.';
             return;
         }
@@ -289,16 +273,16 @@ function initializeDashboard() {
 
 function renderResults(results) {
     const container = document.getElementById('results-container');
-container.innerHTML = ''; // Clear previous results
+    container.innerHTML = '';
     
     if (results.length === 0) {
-        container.innerHTML = '<div class="alert alert-info">No timetables could be generated with the current constraints and data. Please adjust your inputs.</div>';
+        container.innerHTML = '<div class="alert alert-info">No timetables could be generated. This could be due to impossible constraints or not enough data. Please adjust your inputs.</div>';
         return;
     }
 
     results.forEach(result => {
         const resultDiv = document.createElement('div');
-        resultDiv.className = 'mb-5 card'; // Add card styling
+        resultDiv.className = 'mb-5 card';
         resultDiv.innerHTML = `
             <div class="card-header">
                 <h4 class="mb-0">Option ${result.option} <span class="badge bg-secondary ms-2">Fitness Score: ${result.fitness}</span></h4>
@@ -316,16 +300,13 @@ container.innerHTML = ''; // Clear previous results
 function renderTimetable(timetableData, containerId) {
     const container = document.getElementById(containerId);
     
-    // These should ideally come from the backend's configuration
     const timeslots = ["9-10", "10-11", "11-12", "1-2", "2-3"];
     const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
-    
-    // Get unique batches from the generated timetable data
     const batches = [...new Set(timetableData.map(g => g.batch))].sort();
 
     let html = '';
     if (batches.length === 0) {
-        html = '<div class="alert alert-warning">No batches found in the generated timetable.</div>';
+        html = '<div class="alert alert-warning">No schedule generated for any batch.</div>';
     } else {
         batches.forEach(batch => {
             html += `<h5 class="mt-4 mb-3">Timetable for Batch: <span class="badge bg-info">${batch}</span></h5>`;
@@ -340,7 +321,7 @@ function renderTimetable(timetableData, containerId) {
                     const classes = timetableData.filter(gene => gene.batch === batch && gene.day === day && gene.timeslot === slot);
                     let cellContent = classes.map(c => 
                         `<div><strong>${c.subject}</strong><br><small>${c.faculty}</small><br><small><i>${c.room}</i></small></div>`
-                    ).join('<hr class="my-1">'); // Separate multiple classes in one slot
+                    ).join('<hr class="my-1">');
                     html += `<td>${cellContent}</td>`;
                 });
                 html += '</tr>';
