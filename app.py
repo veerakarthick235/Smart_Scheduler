@@ -1,4 +1,3 @@
-# app.py
 import os
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -203,6 +202,11 @@ def add_subject_to_faculty(faculty_id):
 # ======================================================================
 # --- SCHEDULER API ---
 # ======================================================================
+# app.py -> Replace ONLY the generate_timetable function with this
+
+# ======================================================================
+# --- SCHEDULER API ---
+# ======================================================================
 
 @app.route('/api/generate', methods=['POST'])
 def generate_timetable():
@@ -215,7 +219,19 @@ def generate_timetable():
         db_faculty = Faculty.query.all()
         db_subjects = Subject.query.all()
 
-        # --- NEW: PRE-GENERATION VALIDATION ---
+        # --- NEW: DETAILED DEBUG REPORT ---
+        print("\n--- DATA VALIDATION REPORT ---")
+        print(f"Rooms found: {len(db_rooms)}")
+        print(f"Batches found: {len(db_batches)}")
+        print(f"Subjects found: {len(db_subjects)}")
+        print(f"Faculty found: {len(db_faculty)}")
+        
+        is_any_faculty_assigned = any(f.subjects for f in db_faculty)
+        print(f"Is at least one faculty assigned a subject? {is_any_faculty_assigned}")
+        print("--------------------------------\n")
+        # --- END OF REPORT ---
+
+        # --- PRE-GENERATION VALIDATION ---
         if not db_rooms:
             return jsonify({"status": "error", "message": "No rooms found. Please add at least one room."}), 400
         if not db_batches:
@@ -225,8 +241,6 @@ def generate_timetable():
         if not db_faculty:
             return jsonify({"status": "error", "message": "No faculty found. Please add at least one faculty member."}), 400
 
-        # Critical Check: Ensure at least one faculty member is assigned to at least one subject.
-        is_any_faculty_assigned = any(f.subjects for f in db_faculty)
         if not is_any_faculty_assigned:
             return jsonify({"status": "error", "message": "Faculty members have not been assigned any subjects. Please assign subjects on the 'Manage Data' page."}), 400
         # --- END OF VALIDATION ---
@@ -264,7 +278,6 @@ def generate_timetable():
         return jsonify({"status": "success", "results": results_json})
     
     except Exception as e:
-        # This will now catch any unexpected algorithm errors (like dividing by zero if data is malformed)
         print(f"Error during generation: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
