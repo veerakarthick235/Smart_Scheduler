@@ -90,10 +90,6 @@ Before the first run, initialize the database:
 python database_setup.py
 ```
 
-> **Default Admin Credentials**  
-> Username: `admin`  
-> Password: `password123`
-
 ### 4. Running the Application
 Start the Flask development server:
 ```bash
@@ -147,3 +143,4 @@ This project is licensed under the **MIT License** – you’re free to use, mod
 ---
 
 **💡 “AI doesn’t replace humans — it amplifies human intelligence.”**
+
